@@ -1,5 +1,5 @@
-﻿// Scrobblelytics (Public Version)
-var LASTFM_API_KEY = "b70e67417e70edf414679d2478d9daad";
+// Scrobblelytics (Public Version)
+var LASTFM_API_KEY = localStorage.getItem("scrobblelytics_apikey") || "";
 var LASTFM_BASE = "https://ws.audioscrobbler.com/2.0/";
 
 var PERIODS = [
@@ -180,7 +180,8 @@ var TABS = [
 function App() {
   h = Spicetify.React.createElement;
   var savedUser = localStorage.getItem("scrobblelytics_user") || "";
-  var ts = Spicetify.React.useState(savedUser ? "overview" : "settings"); 
+  var savedKey = localStorage.getItem("scrobblelytics_apikey") || "";
+  var ts = Spicetify.React.useState((savedUser && savedKey) ? "overview" : "settings"); 
   var tab = ts[0], setTab = ts[1];
   var u = Spicetify.React.useState(savedUser);
   var currentUser = u[0], setCurrentUser = u[1];
@@ -189,18 +190,27 @@ function App() {
     return h("section", { className: "lfm-app" },
       h("header", { className: "lfm-hdr" }, h("h1", { className: "lfm-h1" }, "Scrobblelytics")),
       h(Sect, { title: "Setup" },
-        h("p", { className: "lfm-note" }, "Enter your Last.fm username to pull your stats."),
+        h("p", { className: "lfm-note" }, "Enter your Last.fm username and API key (get a free key at last.fm/api)."),
         h("input", { 
           defaultValue: currentUser,
           placeholder: "Username",
           id: "lfm-user-input",
           style: { padding: "10px", fontSize: "14px", borderRadius: "4px", border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.05)", color: "var(--spice-text)", marginRight: "10px", width: "200px" }
         }),
+        h("input", { 
+          defaultValue: savedKey,
+          placeholder: "API Key",
+          id: "lfm-key-input",
+          style: { padding: "10px", fontSize: "14px", borderRadius: "4px", border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.05)", color: "var(--spice-text)", marginRight: "10px", width: "300px" }
+        }),
         h("button", {
           onClick: function() { 
             var inputUser = document.getElementById("lfm-user-input").value.trim();
-            if (inputUser) {
+            var inputKey = document.getElementById("lfm-key-input").value.trim();
+            if (inputUser && inputKey) {
               localStorage.setItem("scrobblelytics_user", inputUser);
+              localStorage.setItem("scrobblelytics_apikey", inputKey);
+              LASTFM_API_KEY = inputKey;
               setCurrentUser(inputUser);
               setTab("overview");
             }
