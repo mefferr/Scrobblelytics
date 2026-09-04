@@ -15,3 +15,6 @@ if you want to do it manually:
 
 ## setup
 once it's installed, just open the tab and type in your last.fm username. you don't need any api keys or login authorization.
+
+
+*Officially published to the Spicetify Marketplace!*
